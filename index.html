@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *,*:before,*:after{
+            box-sizing: border-box;
+            font-family: 'Arial';
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            background: rgba(20,25,45);
+            overflow: hidden;
+        }
+        .container{
+            border: 1px solid #fff;
+            padding: 40px;
+            width: 1000px;
+        }
+        h1{
+            font-size: 32px;
+            line-height: 40px;
+            text-align: center;
+            color: #fff;
+        }
+        .container-top{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #fff;
+            width: 50%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        .container-top__center{
+            font-size: 22px;
+            line-height: 20px;
+            color: #fff;
+        }
+        .container-top__item{
+            width: 50%;
+            text-align: center;
+        }
+        .container-top__name{
+            font-size: 26px;
+            line-height: 36px;
+            color: #fff;
+        }
+        .container-top__counter{
+            font-size: 32px;
+            line-height: 40px;
+            color: #fff;
+        }
+        .container-btn{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 70%;
+            margin: 50px auto;
+        }
+        .container-btn__item{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container-btn__item div{
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            border: 2px solid #fff;
+            margin: 0 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .container-btn__item-user div{
+            cursor: pointer;
+        }
+        .container-btn__item div.active{
+            background: green;
+        }
+        .container-btn__item div.fail{
+            background: red;
+        }
+        .result{
+            font-size: 22px;
+            line-height: 28px;
+            color: #fff;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .new-game{
+            font-size: 20px;
+            line-height: 28px;
+            color: #fff;
+            border-radius: 30px;
+            width: 200px;
+            text-align: center;
+            margin: 40px auto;
+            border: 1px solid #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .container-btn__item-comp.blink .rock {
+             animation: blink 0.3s linear infinite;
+         }
+        .container-btn__item-comp.blink .scissors {
+            animation: blink 0.3s 0.1s linear infinite;
+        }
+        .container-btn__item-comp.blink .paper {
+            animation: blink 0.3s 0.2s linear infinite;
+        }
+        .container-btn__item-comp.blink {
+            animation-play-state: paused;
+        }
+        @keyframes blink {
+            100% {background-color: green;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game">
+        <div class="container">
+            <h1>Камень-ножницы-бумага</h1>
+            <div class="container-top">
+                <div class="container-top__item">
+                    <div class="container-top__name">Игрок</div>
+                    <div class="container-top__counter countUser">0</div>
+                </div>
+                <span class="container-top__center">:</span>
+                <div class="container-top__item">
+                    <div class="container-top__name">Компьютер</div>
+                    <div class="container-top__counter countComp">0</div>
+                </div>
+            </div>
+            <div class="container-btn">
+                <div class="container-btn__item container-btn__item-user">
+                    <div class="rock" data-choice="r">К</div>
+                    <div class="scissors" data-choice="s">Н</div>
+                    <div class="paper" data-choice="p">Б</div>
+                </div>
+                <div class="container-btn__item container-btn__item-comp">
+                    <div class="rock" data-choice="r">К</div>
+                    <div class="scissors" data-choice="s">Н</div>
+                    <div class="paper" data-choice="p">Б</div>
+                </div>
+            </div>
+            <div class="result">Сделайте выбор</div>
+        </div>
+        <div class="new-game">Играть заново</div>
+    </div>
+
+    <script>
+        const newGamebtn = document.querySelector('.new-game');
+        const choiceUser = document.querySelectorAll('.container-btn__item-user div');
+        const comp = document.querySelector('.container-btn__item-comp');
+        const compAll = document.querySelectorAll('.container-btn__item-comp div');
+        const result = document.querySelector('.result');
+        const countUserWrite = document.querySelector('.countUser');
+        const countCompWrite = document.querySelector('.countComp');
+        let countUser = 0;
+        let countComp = 0;
+
+        function choice(num) {
+            for (let i = 0; i < compAll.length; i++) {
+                compAll[i].classList.remove('active');
+                if (i == num - 1) {
+                    compAll[i].classList.add('active');
+                }
+            }
+        }
+
+        function win(el) {
+            let user = el.getAttribute('data-choice');
+            let computer;
+            for (let i = 0; i < compAll.length; i++) {
+                if (compAll[i].classList.contains('active')) {
+                    computer = compAll[i];
+                }
+            }
+
+            const res = user + computer.getAttribute('data-choice');
+
+            switch (res) {
+                case 'rr':
+                case 'ss':
+                case 'pp':
+                    result.innerText = 'Ничья';
+                    break;
+                case 'rs':
+                case 'sp':
+                case 'pr':
+                    result.innerText = 'Победили вы!!';
+                    computer.classList.add('fail');
+                    countUser++;
+                    countUserWrite.innerHTML = countUser;
+                    break;
+                case 'sr':
+                case 'ps':
+                case 'rp':
+                    result.innerText = 'Победил компьютер!';
+                    el.classList.add('fail');
+                    countComp++;
+                    countCompWrite.innerHTML = countComp;
+                    break;
+            }
+        }
+
+        function random() {
+            return Math.round(Math.random() * (3 - 1) + 1);
+        }
+
+        function newGame() {
+            countUser = 0;
+            countUserWrite.innerHTML = 0;
+            countComp = 0;
+            countCompWrite.innerHTML = 0;
+
+            result.innerText = 'Сделайте выбор';
+
+            choiceUser.forEach(el => el.classList.remove('active', 'fail'));
+            compAll.forEach(el => el.classList.remove('active', 'fail'));
+        }
+
+        choiceUser.forEach(item => {
+            item.addEventListener('click', (e) => {
+                choiceUser.forEach(el => el.classList.remove('active', 'fail'));
+                compAll.forEach(el => el.classList.remove('active', 'fail'));
+                item.classList.add('active');
+                comp.classList.add('blink');
+                setTimeout(() => {
+                    comp.classList.remove('blink');
+                    const rand = random();
+                    choice(rand);
+                    win(e.target);
+                }, 3000)
+            })
+        });
+
+        newGamebtn.addEventListener('click', newGame);
+    </script>
+</body>
+</html>
